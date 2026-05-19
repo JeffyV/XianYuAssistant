@@ -65,7 +65,7 @@ const getPageButtons = () => {
 
 // 手机端商品列表滚动容器
 const mobileGoodsRef = ref<HTMLElement | null>(null)
-const sidebarCollapsed = ref(true)
+const sidebarCollapsed = ref(false)
 
 const handleMobileGoodsScroll = () => {
   if (!mobileGoodsRef.value || goodsLoading.value) return

@@ -15,7 +15,7 @@ import IconPackage from '@/components/icons/IconPackage.vue'
 
 import OrderTable from './components/OrderTable.vue'
 
-const goodsPanelCollapsed = ref(true)
+const goodsPanelCollapsed = ref(false)
 const isDesktopCollapsed = computed(() => !isMobile.value && goodsPanelCollapsed.value)
 
 const {

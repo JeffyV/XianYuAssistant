@@ -22,7 +22,7 @@ import IconChat from '@/components/icons/IconChat.vue'
 import GoodsDetail from '../goods/components/GoodsDetail.vue'
 import MultiImageUploader from '@/components/MultiImageUploader.vue'
 
-const goodsPanelCollapsed = ref(true)
+const goodsPanelCollapsed = ref(false)
 const isDesktopCollapsed = computed(() => !isMobile.value && goodsPanelCollapsed.value)
 
 const {

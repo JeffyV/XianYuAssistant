@@ -19,7 +19,7 @@ import IconSearch from '@/components/icons/IconSearch.vue'
 import GoodsDetailDialog from '../goods/components/GoodsDetailDialog.vue'
 import ImageUploader from '@/components/ImageUploader.vue'
 
-const goodsPanelCollapsed = ref(true)
+const goodsPanelCollapsed = ref(false)
 const isDesktopCollapsed = computed(() => !isMobile.value && goodsPanelCollapsed.value)
 
 const {
