@@ -64,7 +64,7 @@ const showApiKey = ref(false)
 const EMBEDDING_API_KEY_SETTING = 'ai_embedding_api_key'
 const EMBEDDING_BASE_URL_SETTING = 'ai_embedding_base_url'
 const EMBEDDING_MODEL_SETTING = 'ai_embedding_model'
-const DEFAULT_EMBEDDING_MODEL = 'text-embedding-v3'
+const DEFAULT_EMBEDDING_MODEL = 'text-embedding-v4'
 
 const embeddingApiKey = ref('')
 const embeddingBaseUrl = ref('')
@@ -1002,7 +1002,7 @@ function handleBackupMenuEnter() {
                 v-model="embeddingModel"
                 type="text"
                 class="settings__input"
-                placeholder="Embedding 模型名称，如 text-embedding-v3"
+                placeholder="Embedding 模型名称，如 text-embedding-v4"
                 :disabled="embeddingSaving"
               />
             </div>

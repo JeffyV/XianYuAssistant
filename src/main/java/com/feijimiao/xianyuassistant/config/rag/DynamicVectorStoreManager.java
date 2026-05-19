@@ -40,8 +40,8 @@ public class DynamicVectorStoreManager {
     private static final String EMBEDDING_BASE_URL_SETTING = "ai_embedding_base_url";
     private static final String EMBEDDING_MODEL_SETTING = "ai_embedding_model";
 
-    private static final String DEFAULT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode";
-    private static final String DEFAULT_EMBEDDING_MODEL = "text-embedding-v3";
+    private static final String DEFAULT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/";
+    private static final String DEFAULT_EMBEDDING_MODEL = "text-embedding-v4";
 
     @Value("${ai.vectorstore.simple.file-path:dbdata/vectorstore.json}")
     private String vectorStoreFilePath;
