@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+xianyu_backup_*.json
+
 ### STS ###
 .apt_generated
 .classpath
@@ -44,5 +46,3 @@ build/
 /.codeartsdoer/
 /.arts/
 /.qoder/
-/.qoder/
-/.arts/
