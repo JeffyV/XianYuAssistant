@@ -53,11 +53,11 @@ RUN mkdir -p /app/dbdata /app/logs
 COPY --from=backend-build /app/target/XianYuAssistant-2.0.0.jar app.jar
 
 # 暴露端口
-EXPOSE 12400
+EXPOSE 8066
 
 # 环境变量
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
-ENV SERVER_PORT=12400
+ENV SERVER_PORT=8066
 ENV ALI_API_KEY=""
 
 # 启动命令

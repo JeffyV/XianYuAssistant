@@ -15,7 +15,7 @@ NC='\033[0m'
 
 # 配置
 INSTALL_DIR="${HOME}/xianyu-assistant"
-PORT="${PORT:-12400}"
+PORT="${PORT:-8066}"
 JAVA_OPTS="${JAVA_OPTS:--Xms256m -Xmx512m}"
 JDK_VERSION="21"
 

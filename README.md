@@ -108,7 +108,7 @@
 ```bash
 docker run -d \
   --name xianyu-assistant \
-  -p 12400:12400 \
+  -p 8066:8066 \
   -v $(pwd)/data/dbdata:/app/dbdata \
   -v $(pwd)/data/logs:/app/logs \
   --restart unless-stopped \
@@ -119,7 +119,7 @@ docker run -d \
 ```powershell
 docker run -d `
   --name xianyu-assistant `
-  -p 12400:12400 `
+  -p 8066:8066 `
   -v ${PWD}/data/dbdata:/app/dbdata `
   -v ${PWD}/data/logs:/app/logs `
   --restart unless-stopped `
@@ -133,7 +133,7 @@ docker run -d `
 ```bash
 docker run -d \
   --name xianyu-assistant \
-  -p 12400:12400 \
+  -p 8066:8066 \
   -e JAVA_OPTS="-Xms256m -Xmx512m" \
   -v /your/path/dbdata:/app/dbdata \
   -v /your/path/logs:/app/logs \
@@ -145,11 +145,11 @@ docker run -d \
 
 | 参数 | 默认值 | 说明 |
 |------|--------|------|
-| `-p 12400:12400` | 12400:12400 | 端口映射（物理机端口:容器端口） |
+| `-p 8066:8066` | 8066:8066 | 端口映射（物理机端口:容器端口） |
 | `-v /app/dbdata` | - | 数据库数据目录（SQLite + 向量数据库） |
 | `-v /app/logs` | - | 应用日志目录 |
 | `-e JAVA_OPTS` | -Xms256m -Xmx512m | JVM内存参数 |
-| `-e SERVER_PORT` | 12400 | Spring Boot服务端口（容器内部） |
+| `-e SERVER_PORT` | 8066 | Spring Boot服务端口（容器内部） |
 
 > **数据目录说明**:
 > - `dbdata/xianyu_assistant.db` - SQLite数据库（账号、商品、订单、配置等）
@@ -185,7 +185,7 @@ docker rm xianyu-assistant
 
 #### 访问系统
 
-部署成功后，在浏览器中访问：`http://localhost:12400` 或 `http://你的服务器IP:12400`
+部署成功后，在浏览器中访问：`http://localhost:8066` 或 `http://你的服务器IP:8066`
 
 ---
 
@@ -221,12 +221,12 @@ java -jar target/XianYuAssistant-1.1.0.jar
 #### 自定义配置
 
 ```bash
-java -Xms256m -Xmx512m -Dserver.port=12400 -jar target/XianYuAssistant-1.1.0.jar
+java -Xms256m -Xmx512m -Dserver.port=8066 -jar target/XianYuAssistant-1.1.0.jar
 ```
 
 #### 访问系统
 
-部署成功后，在浏览器中访问：`http://localhost:12400` 或 `http://你的服务器IP:12400`
+部署成功后，在浏览器中访问：`http://localhost:8066` 或 `http://你的服务器IP:8066`
 
 ---
 

@@ -17,11 +17,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:12400',
+        target: 'http://localhost:8066',
         changeOrigin: true
       },
       '/ai': {
-        target: 'http://localhost:12400',
+        target: 'http://localhost:8066',
         changeOrigin: true
       }
     }

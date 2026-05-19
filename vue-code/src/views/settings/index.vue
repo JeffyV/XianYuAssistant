@@ -1422,7 +1422,7 @@ function handleBackupMenuEnter() {
                 <div class="settings__code-block">
                   <pre><code>docker run -d \
   --name xianyu-assistant \
-  -p 12400:12400 \
+  -p 8066:8066 \
   -v $(pwd)/data/dbdata:/app/dbdata \
   -v $(pwd)/data/logs:/app/logs \
   --restart unless-stopped \
