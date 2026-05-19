@@ -1,5 +1,6 @@
 package com.feijimiao.xianyuassistant.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.feijimiao.xianyuassistant.config.rag.DynamicAIChatClientManager;
 import com.feijimiao.xianyuassistant.config.rag.DynamicVectorStoreManager;
 import com.feijimiao.xianyuassistant.service.AIService;
@@ -44,13 +45,22 @@ public class AIServiceImpl implements AIService {
     private static final String SIMILARITY_THRESHOLD_KEY = "similarity_threshold";
 
     /** 默认系统提示词 */
-    private static final String DEFAULT_SYS_PROMPT = "你是一个闲鱼卖家，你叫肥极喵，不要回复的像AI，简短回答\n参考相关信息回答,不要乱回答,不知道就换不同语气回复提示用户详细点询问";
+    private static final String DEFAULT_SYS_PROMPT = "你是一个闲鱼卖家，简短回答\n参考相关信息回答，不清楚、不确定、没提及到的内容引到用户看商品详情";
 
     /** 默认相似度阈值 */
     private static final double DEFAULT_SIMILARITY_THRESHOLD = 0.1;
 
     /** AI不可用时的降级提示 */
     private static final String AI_NOT_AVAILABLE_MSG = "AI服务暂未配置，请在系统设置中配置API Key后再试";
+
+    private static final String AI_TIP = "[AI回复，仅供参考]";
+
+    private String appendAiTip(String originReplyContent) {
+        if (StrUtil.isEmpty(originReplyContent) || originReplyContent.contains(AI_TIP)) {
+            return originReplyContent;
+        }
+        return originReplyContent + "\n" + AI_TIP;
+    }
 
     private String extractAiErrorMessage(Throwable e) {
         String msg = e.getMessage();
@@ -247,7 +257,7 @@ public class AIServiceImpl implements AIService {
                     .user(userMessage)
                     .call()
                     .content();
-            result.setReplyContent(replyContent);
+            result.setReplyContent(this.appendAiTip(replyContent));
         } catch (Exception e) {
             log.error("[AI Chat WithDetails] 调用LLM失败: {}", e.getMessage());
             result.setReplyContent("AI回复生成失败：" + e.getMessage());
@@ -330,7 +340,7 @@ public class AIServiceImpl implements AIService {
                     .user(userMessage)
                     .call()
                     .content();
-            result.setReplyContent(replyContent);
+            result.setReplyContent(this.appendAiTip(replyContent));
         } catch (Exception e) {
             log.error("[AI Chat WithDetails+Context] 调用LLM失败: {}", e.getMessage());
             result.setReplyContent("AI回复生成失败：" + e.getMessage());
@@ -523,7 +533,7 @@ public class AIServiceImpl implements AIService {
                         .content();
             }
             
-            result.setReplyContent(replyContent);
+            result.setReplyContent(this.appendAiTip(replyContent));
         } catch (Exception e) {
             log.error("[AI Chat FixedMaterial] 调用LLM失败: {}", e.getMessage());
             result.setReplyContent("AI回复生成失败：" + e.getMessage());
