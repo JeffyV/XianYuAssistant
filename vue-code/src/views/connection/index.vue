@@ -65,6 +65,10 @@ const handleSelectAccount = (account: any) => {
   }
 }
 
+const handleStatusChanged = (accountId: number) => {
+  loadConnectionStatus(accountId, true)
+}
+
 onMounted(() => {
   checkScreenSize()
   window.addEventListener('resize', checkScreenSize)
@@ -116,6 +120,7 @@ onUnmounted(() => {
         <div class="connection__detail">
           <ConnectionDetail
             :account-id="selectedAccountId"
+            @status-changed="handleStatusChanged"
           />
         </div>
       </div>
