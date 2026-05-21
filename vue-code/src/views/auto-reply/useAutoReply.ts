@@ -762,36 +762,62 @@ export function useAutoReply() {
   }
 
   // Update delay seconds
-  const updateDelaySeconds = async () => {
+  let delaySaveTimer: number | null = null
+  const updateDelaySeconds = async (event?: Event) => {
     if (!selectedGoods.value || !selectedAccountId.value) return
-
-    // 验证范围
-    let seconds = delaySeconds.value
-    if (seconds < 5) seconds = 5
-    if (seconds > 120) seconds = 120
-    delaySeconds.value = seconds
-
-    configSaving.value = true
-    try {
-      const response = await updateAutoReplyConfig({
-        xianyuAccountId: selectedAccountId.value,
-        xyGoodsId: selectedGoods.value.item.xyGoodId,
-        ragDelaySeconds: seconds
-      })
-      if (response.code === 0 || response.code === 200) {
-        showSuccess('延时设置已保存')
-      } else {
-        throw new Error(response.msg || '操作失败')
-      }
-    } catch (error: any) {
-      console.error('更新延时失败:', error)
-      // 只有在错误消息未显示过时才弹出提示（避免重复显示）
-      if (!error.messageShown) {
-        showError(error.message || '操作失败')
-      }
-    } finally {
-      configSaving.value = false
+    
+    // 从事件目标获取当前输入框的值（用于回车键场景）
+    let seconds: number
+    if (event?.target) {
+      seconds = parseInt((event.target as HTMLInputElement).value, 10)
+    } else {
+      seconds = delaySeconds.value
     }
+    
+    // 验证范围
+    if (isNaN(seconds) || seconds < 5) {
+      if (!isNaN(seconds) && seconds < 5) {
+        showError('延时时间不能低于5秒')
+      }
+      delaySeconds.value = 5
+      return
+    } else if (seconds > 120) {
+      showError('延时时间不能超过120秒')
+      delaySeconds.value = 120
+      return
+    }
+    
+    // 防抖：清除之前的定时器
+    if (delaySaveTimer) {
+      clearTimeout(delaySaveTimer)
+      delaySaveTimer = null
+    }
+    
+    // 使用防抖延迟保存（300ms内多次触发只保存最后一次）
+    delaySaveTimer = window.setTimeout(async () => {
+      delaySaveTimer = null
+      
+      configSaving.value = true
+      try {
+        const response = await updateAutoReplyConfig({
+          xianyuAccountId: selectedAccountId.value!,
+          xyGoodsId: selectedGoods.value!.item.xyGoodId,
+          ragDelaySeconds: seconds
+        })
+        if (response.code === 0 || response.code === 200) {
+          showSuccess('延时设置已保存')
+        } else {
+          throw new Error(response.msg || '操作失败')
+        }
+      } catch (error: any) {
+        console.error('更新延时失败:', error)
+        if (!error.messageShown) {
+          showError(error.message || '操作失败')
+        }
+      } finally {
+        configSaving.value = false
+      }
+    }, 300)
   }
 
   // Toggle auto reply

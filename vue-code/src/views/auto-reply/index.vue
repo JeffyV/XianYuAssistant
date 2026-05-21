@@ -373,15 +373,10 @@ onMounted(() => {
                   min="5"
                   max="120"
                   :disabled="configSaving"
+                  @change="updateDelaySeconds"
+                  @keydown.enter="updateDelaySeconds($event)"
                 />
                 <span class="ar__delay-unit">秒</span>
-                <button
-                  class="ar__delay-btn"
-                  :disabled="configSaving"
-                  @click="updateDelaySeconds"
-                >
-                  保存
-                </button>
               </div>
               <div class="ar__delay-hint">买家发送消息后等待指定时间，若无新消息则自动回复</div>
             </div>
