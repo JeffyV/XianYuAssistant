@@ -535,8 +535,10 @@ public class AccountServiceImpl implements AccountService {
                 cookie.setCookieStatus(1);
                 cookie.setExpireTime(getFutureTimeString(30));
                 cookie.setUpdatedTime(getCurrentTimeString());
+                cookie.setWebsocketToken(null);
+                cookie.setTokenExpireTime(null);
                 cookieMapper.updateById(cookie);
-                log.info("更新Cookie成功: accountId={}", accountId);
+                log.info("更新Cookie成功，已清空旧Token: accountId={}", accountId);
             } else {
                 // 创建新Cookie
                 cookie = new XianyuCookie();

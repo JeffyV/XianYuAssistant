@@ -472,6 +472,19 @@ public class WebSocketController {
                     applicationContext.getBean(com.feijimiao.xianyuassistant.service.AccountService.class);
             accountService.updateAccountCookie(reqDTO.getXianyuAccountId(), unb, reqDTO.getCookieText());
             
+            // Cookie更新后，清除所有旧的运行时状态
+            log.info("Cookie已更新，开始清理旧的运行时状态: accountId={}", reqDTO.getXianyuAccountId());
+            
+            // 1. 停止旧的WebSocket连接（内存中的客户端会被移除）
+            webSocketService.stopWebSocket(reqDTO.getXianyuAccountId());
+            
+            // 2. 清除验证码等待状态（内存中的pendingCaptchaAccounts）
+            com.feijimiao.xianyuassistant.service.WebSocketTokenService tokenService = 
+                    applicationContext.getBean(com.feijimiao.xianyuassistant.service.WebSocketTokenService.class);
+            tokenService.clearCaptchaWait(reqDTO.getXianyuAccountId());
+            
+            log.info("旧运行时状态已清理完成: accountId={}", reqDTO.getXianyuAccountId());
+            
             // 记录操作日志
             operationLogService.log(reqDTO.getXianyuAccountId(),
                     com.feijimiao.xianyuassistant.constants.OperationConstants.Type.UPDATE,
