@@ -144,12 +144,16 @@ const handleRefresh = async () => {
 
 const handleManualUpdateCookieSuccess = async () => {
   await loadConnectionStatus()
-  emit('status-changed', props.accountId)
+  if (props.accountId !== null) {
+    emit('status-changed', props.accountId)
+  }
 }
 
 const handleQRUpdateSuccess = async () => {
   await loadConnectionStatus()
-  emit('status-changed', props.accountId)
+  if (props.accountId !== null) {
+    emit('status-changed', props.accountId)
+  }
 }
 
 const handleCaptchaConfirm = () => {
