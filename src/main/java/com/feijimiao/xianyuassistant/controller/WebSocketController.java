@@ -334,6 +334,14 @@ public class WebSocketController {
             respDTO.setConnected(connected);
             respDTO.setStatus(connected ? "已连接" : "未连接");
 
+            // 查询账号状态
+            com.feijimiao.xianyuassistant.mapper.XianyuAccountMapper accountStatusMapper =
+                    applicationContext.getBean(com.feijimiao.xianyuassistant.mapper.XianyuAccountMapper.class);
+            XianyuAccount accountStatus = accountStatusMapper.selectById(reqDTO.getXianyuAccountId());
+            if (accountStatus != null) {
+                respDTO.setAccountStatus(accountStatus.getStatus());
+            }
+
             // 获取Cookie状态和Cookie值
             com.feijimiao.xianyuassistant.service.AccountService accountService =
                     applicationContext.getBean(com.feijimiao.xianyuassistant.service.AccountService.class);
@@ -483,7 +491,29 @@ public class WebSocketController {
                     applicationContext.getBean(com.feijimiao.xianyuassistant.service.WebSocketTokenService.class);
             tokenService.clearCaptchaWait(reqDTO.getXianyuAccountId());
             
+            // 3. 恢复账号状态为正常（如果之前因Cookie问题被标记为异常）
+            if (account.getStatus() != null && account.getStatus() == -2) {
+                account.setStatus(1);
+                accountMapper.updateById(account);
+                log.info("【账号{}】Cookie手动更新后，账号状态已恢复为正常(1)", reqDTO.getXianyuAccountId());
+            }
+            
             log.info("旧运行时状态已清理完成: accountId={}", reqDTO.getXianyuAccountId());
+            
+            // 4. 自动触发重新连接
+            log.info("Cookie更新成功，自动触发WebSocket重新连接: accountId={}", reqDTO.getXianyuAccountId());
+            new Thread(() -> {
+                try {
+                    boolean success = webSocketService.startWebSocket(reqDTO.getXianyuAccountId());
+                    if (success) {
+                        log.info("【账号{}】Cookie更新后自动重连成功", reqDTO.getXianyuAccountId());
+                    } else {
+                        log.warn("【账号{}】Cookie更新后自动重连失败（将在后续重试）", reqDTO.getXianyuAccountId());
+                    }
+                } catch (Exception e) {
+                    log.error("【账号{}】Cookie更新后自动重连异常", reqDTO.getXianyuAccountId(), e);
+                }
+            }).start();
             
             // 记录操作日志
             operationLogService.log(reqDTO.getXianyuAccountId(),
@@ -801,6 +831,7 @@ public class WebSocketController {
         private Long xianyuAccountId;  // 账号ID
         private Boolean connected;     // 是否已连接
         private String status;         // 连接状态描述
+        private Integer accountStatus; // 账号状态 1:正常 -2:异常待处理
         private Integer cookieStatus;  // Cookie状态 1:有效 2:过期 3:失效
         private String cookieText;     // Cookie值
         private String mH5Tk;          // H5 Token (_m_h5_tk)

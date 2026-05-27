@@ -9,6 +9,7 @@ interface ConnectionStatus {
   xianyuAccountId: number
   connected: boolean
   status: string
+  accountStatus?: number
   cookieStatus?: number
   cookieText?: string
   websocketToken?: string

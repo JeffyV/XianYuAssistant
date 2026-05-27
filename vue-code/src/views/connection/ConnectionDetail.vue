@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getConnectionStatus, startConnection, stopConnection } from '@/api/websocket'
 import { queryOperationLogs, type OperationLog } from '@/api/operation-log'
 import { showSuccess, showError, showInfo } from '@/utils'
+import { getAccountStatusText } from '@/utils'
 import { showConfirm } from '@/utils/confirm'
 import { toast } from '@/utils/toast'
 import DesktopDetail from './components/ConnectionDetail.vue'
@@ -30,6 +31,7 @@ interface ConnectionStatus {
   xianyuAccountId: number
   connected: boolean
   status: string
+  accountStatus?: number
   cookieStatus?: number
   cookieText?: string
   mH5Tk?: string
@@ -286,6 +288,13 @@ onBeforeUnmount(() => {
             <span class="status-hero__sub">账号 ID: {{ connectionStatus.xianyuAccountId }}</span>
           </div>
           <span class="status-hero__badge">{{ connectionStatus.status }}</span>
+        </div>
+
+        <div v-if="connectionStatus.accountStatus !== undefined && connectionStatus.accountStatus !== null" class="account-status-inline" :class="getAccountStatusText(connectionStatus.accountStatus).type === 'danger' ? 'account-status-inline--danger' : ''">
+          <span class="account-status-inline__label">账号状态</span>
+          <span class="account-status-inline__value" :class="'account-status-inline__value--' + getAccountStatusText(connectionStatus.accountStatus).type">
+            {{ getAccountStatusText(connectionStatus.accountStatus).text }}
+          </span>
         </div>
 
         <div class="cap-section">
@@ -611,6 +620,42 @@ onBeforeUnmount(() => {
   background: rgba(0, 0, 0, 0.05);
   color: rgba(28,28,30,.55);
   flex-shrink: 0;
+}
+
+.account-status-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(120, 120, 128, 0.06);
+  font-size: 13px;
+}
+
+.account-status-inline--danger {
+  background: rgba(255, 59, 48, 0.07);
+  border: 1px solid rgba(255, 59, 48, 0.12);
+}
+
+.account-status-inline__label {
+  color: rgba(28,28,30,.55);
+  font-weight: 500;
+}
+
+.account-status-inline__value {
+  font-weight: 600;
+}
+
+.account-status-inline__value--success {
+  color: #30D158;
+}
+
+.account-status-inline__value--warning {
+  color: #FF9F0A;
+}
+
+.account-status-inline__value--danger {
+  color: #FF453A;
 }
 
 /* Capability Cards */

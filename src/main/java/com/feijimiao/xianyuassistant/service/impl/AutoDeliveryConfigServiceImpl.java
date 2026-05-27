@@ -36,6 +36,12 @@ public class AutoDeliveryConfigServiceImpl implements AutoDeliveryConfigService 
                 existingConfig = autoDeliveryConfigMapper
                         .findByAccountIdAndGoodsIdNoSku(reqDTO.getXianyuAccountId(), reqDTO.getXyGoodsId());
                 if (existingConfig != null && skuId != null && !skuId.isEmpty()) {
+                    boolean noSkuHasContent = (existingConfig.getAutoDeliveryContent() != null && !existingConfig.getAutoDeliveryContent().isEmpty())
+                            || (existingConfig.getKamiConfigIds() != null && !existingConfig.getKamiConfigIds().isEmpty());
+                    if (!noSkuHasContent) {
+                        log.info("删除无内容占位的通用配置，ID: {}", existingConfig.getId());
+                        autoDeliveryConfigMapper.deleteById(existingConfig.getId());
+                    }
                     existingConfig = null;
                 }
             }

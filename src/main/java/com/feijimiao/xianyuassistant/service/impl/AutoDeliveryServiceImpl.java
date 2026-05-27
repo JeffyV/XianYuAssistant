@@ -347,6 +347,23 @@ public class AutoDeliveryServiceImpl implements AutoDeliveryService {
                 deliveryConfig = autoDeliveryConfigMapper.findByAccountIdAndGoodsIdNoSku(accountId, xyGoodsId);
             }
 
+            if (deliveryConfig == null || isEmptyDeliveryConfig(deliveryConfig)) {
+                if (deliveryConfig != null) {
+                    log.warn("【账号{}】无SKU配置无发货内容，尝试从其他SKU配置获取: xyGoodsId={}, orderSkuId={}", accountId, xyGoodsId, orderSkuId);
+                }
+                List<XianyuGoodsAutoDeliveryConfig> allConfigs = autoDeliveryConfigMapper.findByAccountIdAndGoodsId(accountId, xyGoodsId);
+                deliveryConfig = null;
+                if (allConfigs != null) {
+                    for (XianyuGoodsAutoDeliveryConfig cfg : allConfigs) {
+                        if (!isEmptyDeliveryConfig(cfg)) {
+                            deliveryConfig = cfg;
+                            log.info("【账号{}】从SKU配置找到有效发货内容: xyGoodsId={}, skuId={}, deliveryMode={}", accountId, xyGoodsId, cfg.getSkuId(), cfg.getDeliveryMode());
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (deliveryConfig == null) {
                 log.warn("【账号{}】商品无匹配的发货配置: xyGoodsId={}, skuId={}", accountId, xyGoodsId, orderSkuId);
                 updateRecordState(recordId, -1, null, "无匹配的发货配置");
@@ -419,8 +436,7 @@ public class AutoDeliveryServiceImpl implements AutoDeliveryService {
 
             if (anySuccess) {
                 updateRecordState(recordId, 1, allContent.toString(), null);
-                XianyuGoodsAutoDeliveryConfig baseConfig = autoDeliveryConfigMapper.findByAccountIdAndGoodsIdNoSku(accountId, xyGoodsId);
-                boolean autoConfirm = (baseConfig != null && baseConfig.getAutoConfirmShipment() != null && baseConfig.getAutoConfirmShipment() == 1);
+                boolean autoConfirm = (deliveryConfig.getAutoConfirmShipment() != null && deliveryConfig.getAutoConfirmShipment() == 1);
                 if (autoConfirm) {
                     log.info("【账号{}】检测到自动确认发货开关已开启，准备自动确认发货: orderId={}", accountId, orderId);
                     executeAutoConfirmShipment(accountId, orderId);
@@ -496,18 +512,36 @@ public class AutoDeliveryServiceImpl implements AutoDeliveryService {
         }
     }
 
+    private boolean isEmptyDeliveryConfig(XianyuGoodsAutoDeliveryConfig config) {
+        if (config == null) {
+            return true;
+        }
+        int mode = config.getDeliveryMode() != null ? config.getDeliveryMode() : 1;
+        if (mode == 1) {
+            return config.getAutoDeliveryContent() == null || config.getAutoDeliveryContent().isEmpty();
+        }
+        if (mode == 2) {
+            return config.getKamiConfigIds() == null || config.getKamiConfigIds().isEmpty();
+        }
+        return false;
+    }
+
     @Override
     public void updateAutoConfirmShipment(Long accountId, String xyGoodsId, Integer autoConfirmShipment) {
-        XianyuGoodsAutoDeliveryConfig config = autoDeliveryConfigMapper.findByAccountIdAndGoodsIdNoSku(accountId, xyGoodsId);
-        if (config == null) {
-            config = new XianyuGoodsAutoDeliveryConfig();
+        List<XianyuGoodsAutoDeliveryConfig> allConfigs = autoDeliveryConfigMapper.findByAccountIdAndGoodsId(accountId, xyGoodsId);
+        if (allConfigs == null || allConfigs.isEmpty()) {
+            XianyuGoodsAutoDeliveryConfig config = new XianyuGoodsAutoDeliveryConfig();
             config.setXianyuAccountId(accountId);
             config.setXyGoodsId(xyGoodsId);
             config.setAutoConfirmShipment(autoConfirmShipment);
             autoDeliveryConfigMapper.insert(config);
         } else {
-            config.setAutoConfirmShipment(autoConfirmShipment);
-            autoDeliveryConfigMapper.updateById(config);
+            for (XianyuGoodsAutoDeliveryConfig cfg : allConfigs) {
+                cfg.setAutoConfirmShipment(autoConfirmShipment);
+                autoDeliveryConfigMapper.updateById(cfg);
+            }
+            log.info("批量更新自动确认发货开关: accountId={}, xyGoodsId={}, autoConfirmShipment={}, 影响记录数={}", 
+                    accountId, xyGoodsId, autoConfirmShipment, allConfigs.size());
         }
     }
 

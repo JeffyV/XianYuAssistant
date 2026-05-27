@@ -5,6 +5,7 @@ import { toast } from '@/utils/toast'
 import { getConnectionStatus, startConnection, stopConnection } from '@/api/websocket'
 import { queryOperationLogs, type OperationLog } from '@/api/operation-log'
 import { showSuccess, showError, showInfo } from '@/utils'
+import { getAccountStatusText } from '@/utils'
 import CredentialModal from './CredentialModal.vue'
 import ManualUpdateCookieModal from './ManualUpdateCookieModal.vue'
 import QRUpdateDialog from './QRUpdateDialog.vue'
@@ -25,6 +26,7 @@ interface ConnectionStatus {
   xianyuAccountId: number
   connected: boolean
   status: string
+  accountStatus?: number
   cookieStatus?: number
   cookieText?: string
   mH5Tk?: string
@@ -276,6 +278,13 @@ onBeforeUnmount(() => {
           <span class="status-badge" :class="connectionStatus.connected ? 'status-badge--on' : 'status-badge--off'">
             <component :is="connectionStatus.connected ? IconCheck : IconAlert" />
             {{ connectionStatus.connected ? '已连接' : '未连接' }}
+          </span>
+        </div>
+
+        <div v-if="connectionStatus.accountStatus !== undefined && connectionStatus.accountStatus !== null" class="account-status-bar" :class="getAccountStatusText(connectionStatus.accountStatus).type === 'danger' ? 'account-status-bar--danger' : ''">
+          <span class="account-status-bar__label">账号状态：</span>
+          <span class="account-status-bar__value" :class="'account-status-bar__value--' + getAccountStatusText(connectionStatus.accountStatus).type">
+            {{ getAccountStatusText(connectionStatus.accountStatus).text }}
           </span>
         </div>
 
@@ -545,6 +554,42 @@ onBeforeUnmount(() => {
 .status-badge--off {
   color: var(--c-danger);
   background: rgba(255, 59, 48, 0.12);
+}
+
+.account-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(120, 120, 128, 0.08);
+  font-size: 13px;
+}
+
+.account-status-bar--danger {
+  background: rgba(255, 59, 48, 0.08);
+  border: 1px solid rgba(255, 59, 48, 0.15);
+}
+
+.account-status-bar__label {
+  color: var(--c-text-2);
+  font-weight: 500;
+}
+
+.account-status-bar__value {
+  font-weight: 600;
+}
+
+.account-status-bar__value--success {
+  color: var(--c-success);
+}
+
+.account-status-bar__value--warning {
+  color: var(--c-warning);
+}
+
+.account-status-bar__value--danger {
+  color: var(--c-danger);
 }
 
 .status-cards {

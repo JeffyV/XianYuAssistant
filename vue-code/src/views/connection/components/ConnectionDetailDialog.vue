@@ -5,6 +5,7 @@ import { toast } from '@/utils/toast';
 
 import { getConnectionStatus, startConnection, stopConnection } from '@/api/websocket';
 import { showSuccess, showError, showInfo } from '@/utils';
+import { getAccountStatusText } from '@/utils';
 import ManualUpdateCookieDialog from './ManualUpdateCookieDialog.vue';
 import ManualUpdateTokenDialog from './ManualUpdateTokenDialog.vue';
 import QRUpdateDialog from './QRUpdateDialog.vue';
@@ -14,6 +15,7 @@ interface ConnectionStatus {
   xianyuAccountId: number;
   connected: boolean;
   status: string;
+  accountStatus?: number;
   cookieStatus?: number;
   cookieText?: string;
   websocketToken?: string;
@@ -325,6 +327,20 @@ onBeforeUnmount(() => {
 
         <!-- 详细信息区域 -->
         <div class="details-grid">
+          <!-- 账号状态 -->
+          <div v-if="connectionStatus.accountStatus !== undefined && connectionStatus.accountStatus !== null" class="detail-section account-status-section">
+            <div class="section-header">
+              <div class="section-icon">👤</div>
+              <div class="section-title-group">
+                <h3 class="section-title">账号状态</h3>
+                <p class="section-note">账号当前运行状态</p>
+              </div>
+              <span class="tag" :class="getAccountStatusText(connectionStatus.accountStatus).type === 'success' ? 'tag--success' : getAccountStatusText(connectionStatus.accountStatus).type === 'warning' ? 'tag--warning' : 'tag--danger'">
+                {{ getAccountStatusText(connectionStatus.accountStatus).text }}
+              </span>
+            </div>
+          </div>
+
           <!-- Cookie 详情 -->
           <div class="detail-section cookie-section">
             <div class="section-header">
