@@ -140,10 +140,6 @@ onMounted(async () => {
     setHeaderContent(HeaderSelectors)
   }
   await loadAccounts()
-  // 账号加载完后重新注入，确保选项渲染
-  if (setHeaderContent) {
-    setHeaderContent(HeaderSelectors)
-  }
   refreshTimer = setInterval(() => {
     if (selectedAccountId.value) {
       loadMessages(true)

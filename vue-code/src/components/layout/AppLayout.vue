@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, onMounted, onUnmounted, computed, provide, markRaw } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed, provide, markRaw } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import NavMenu from './NavMenu.vue'
 import UpdateDialog from './UpdateDialog.vue'
@@ -48,7 +48,7 @@ const isDesktop = ref(false) // > 1024px
 const drawerVisible = ref(false)
 
 // 页面特定的导航栏内容
-const headerContent = shallowRef<any>(null)
+const headerContent = ref<any>(null)
 
 // 提供给页面组件的方法来设置导航栏内容
 const setHeaderContent = (content: any) => {
@@ -131,6 +131,10 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize)
 })
+
+watch(() => route.fullPath, () => {
+  headerContent.value = null
+})
 </script>
 
 <template>
@@ -190,8 +194,8 @@ onUnmounted(() => {
     </transition>
 
     <!-- 桌面端: 固定侧边栏 -->
-    <div v-if="isDesktop" class="layout-container">
-      <aside class="sidebar">
+    <div class="layout-container">
+      <aside v-if="isDesktop" class="sidebar">
         <div class="logo" @click="openUpdateDialog" style="cursor: pointer">
           <div class="logo-icon">X</div>
           <div class="logo-text-wrap">
@@ -207,23 +211,9 @@ onUnmounted(() => {
 
       <div class="el-container">
         <main>
-          <RouterView />
+          <RouterView :key="route.fullPath" />
         </main>
       </div>
-    </div>
-
-    <!-- 平板端: 主内容区 -->
-    <div v-if="isTablet" class="el-container">
-      <main>
-        <RouterView />
-      </main>
-    </div>
-
-    <!-- 手机端: 主内容区 -->
-    <div v-if="isMobile" class="el-container">
-      <main>
-        <RouterView />
-      </main>
     </div>
 
     <UpdateDialog ref="updateDialog" />

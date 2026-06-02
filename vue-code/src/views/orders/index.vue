@@ -99,7 +99,6 @@ onMounted(async () => {
   window.addEventListener('resize', checkScreenSize)
   if (setHeaderContent) setHeaderContent(HeaderSelectors)
   await loadAccounts()
-  if (setHeaderContent) setHeaderContent(HeaderSelectors)
   loadGoods()
   loadOrders()
 })
