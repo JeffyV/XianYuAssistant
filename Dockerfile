@@ -47,10 +47,10 @@ LABEL description="XianYuAssistant - 闲鱼自动化管理系统"
 WORKDIR /app
 
 # 创建数据目录
-RUN mkdir -p /app/dbdata /app/logs
+RUN mkdir -p /app/dbdata /app/logs /app/ms-playwright
 
 # 从构建阶段复制 JAR
-COPY --from=backend-build /app/target/XianYuAssistant-2.0.0.jar app.jar
+COPY --from=backend-build /app/target/XianYuAssistant-2.0.3.jar app.jar
 
 # 暴露端口
 EXPOSE 8066

@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:src/main/resources/static/assets/image-CP-KbDrY.js
 import{h as t}from"./index-DUefcpXS.js";function r(e,n){const a=new FormData;return a.append("accountId",String(e)),a.append("file",n),t({url:"/image/upload",method:"POST",data:a,headers:{"Content-Type":"multipart/form-data"}})}function s(e){return t({url:"/websocket/sendImageMessage",method:"POST",data:e})}export{s,r as u};
+========
+import{h as t}from"./index-DnuxGjD3.js";function r(e,n){const a=new FormData;return a.append("accountId",String(e)),a.append("file",n),t({url:"/image/upload",method:"POST",data:a,headers:{"Content-Type":"multipart/form-data"}})}function s(e){return t({url:"/websocket/sendImageMessage",method:"POST",data:e})}export{s,r as u};
+>>>>>>>> master:src/main/resources/static/assets/image-Bw8yo7wU.js
