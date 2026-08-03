@@ -159,6 +159,9 @@ const checkScreenSize = () => {
   isMobile.value = window.innerWidth < 768
   if (!isMobile.value) {
     mobileView.value = 'goods'
+    sidebarCollapsed.value = false
+  } else {
+    sidebarCollapsed.value = true
   }
 }
 </script>

@@ -123,6 +123,9 @@ onMounted(() => {
   if (setHeaderContent) {
     setHeaderContent(HeaderSelectors)
   }
+  if (isMobile.value) {
+    goodsPanelCollapsed.value = true
+  }
 })
 </script>
 

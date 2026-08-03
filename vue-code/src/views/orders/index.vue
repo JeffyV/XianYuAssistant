@@ -50,6 +50,11 @@ const isMobile = ref(false)
 
 const checkScreenSize = () => {
   isMobile.value = window.innerWidth < 768
+  if (isMobile.value) {
+    goodsPanelCollapsed.value = true
+  } else {
+    goodsPanelCollapsed.value = false
+  }
 }
 
 // 导航栏注入

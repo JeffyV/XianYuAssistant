@@ -36,8 +36,25 @@ public class PlaywrightManager {
 
     private static String getJarDirectory() {
         try {
-            String jarPath = PlaywrightManager.class.getProtectionDomain()
-                    .getCodeSource().getLocation().toURI().getPath();
+            java.security.CodeSource codeSource = PlaywrightManager.class.getProtectionDomain().getCodeSource();
+            if (codeSource == null) {
+                String userDir = System.getProperty("user.dir");
+                log.warn("无法获取CodeSource，使用user.dir: {}", userDir);
+                return userDir;
+            }
+            java.net.URL location = codeSource.getLocation();
+            if (location == null) {
+                String userDir = System.getProperty("user.dir");
+                log.warn("无法获取Location，使用user.dir: {}", userDir);
+                return userDir;
+            }
+            java.net.URI uri = location.toURI();
+            String jarPath = uri.getPath();
+            if (jarPath == null || jarPath.isEmpty()) {
+                String userDir = System.getProperty("user.dir");
+                log.warn("jarPath为空，使用user.dir: {}", userDir);
+                return userDir;
+            }
             File jarFile = new File(jarPath);
             if (jarFile.isFile()) {
                 return jarFile.getParent();

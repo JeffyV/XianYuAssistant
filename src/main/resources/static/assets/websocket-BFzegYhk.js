@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:src/main/resources/static/assets/websocket-BFzegYhk.js
-import{h as o}from"./index-DUefcpXS.js";function n(t){return o({url:"/websocket/status",method:"POST",data:{xianyuAccountId:t}})}function u(t){return o({url:"/websocket/start",method:"POST",data:{xianyuAccountId:t}})}function a(t){return o({url:"/websocket/stop",method:"POST",data:{xianyuAccountId:t}})}function r(t){return o({url:"/websocket/updateCookie",method:"POST",data:t})}export{u as a,n as g,a as s,r as u};
-========
-import{h as o}from"./index-DnuxGjD3.js";function n(t){return o({url:"/websocket/status",method:"POST",data:{xianyuAccountId:t}})}function u(t){return o({url:"/websocket/start",method:"POST",data:{xianyuAccountId:t}})}function a(t){return o({url:"/websocket/stop",method:"POST",data:{xianyuAccountId:t}})}function r(t){return o({url:"/websocket/updateCookie",method:"POST",data:t})}export{u as a,n as g,a as s,r as u};
->>>>>>>> master:src/main/resources/static/assets/websocket-DciOn0B-.js
